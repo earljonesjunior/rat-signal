@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+
+  broker:
+    image: eclipse-mosquitto:1.6.10
+    restart: on-failure
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    networks:
+      rat-net:
+        aliases:
+          - broker
+    volumes:
+      - "./broker/mosquitto.conf:/mosquitto/config/mosquitto.conf"
+
+  middleman:
+    image: nodered/node-red:1.1.2
+    restart: on-failure
+    ports:
+      - "1880:1880"
+    networks:
+      rat-net:
+        aliases:
+          - middleman
+    volumes:
+      - "./middleman:/data"
+
+  endpoint:
+    build: ./endpoint
+    ports: 
+        - "8080:8080"
+    networks:
+      rat-net:
+        aliases:
+          - endpoint
+
+networks:
+  rat-net:
